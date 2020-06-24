@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+./src/logo.svg
+./src/serviceWorker.js
+./src/setupTests.js
+
 # testing
 /coverage
 
