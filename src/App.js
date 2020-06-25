@@ -1,6 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import AddableUserList from "./AddableUserList";
 import AddForm from "./AddForm";
+
+function countActiveuser(users) {
+	console.log("활성 사용자 수를 세는중....");
+	return users.filter((user) => user.active).length;
+}
 
 function App() {
 	const [users, setUsers] = useState([
@@ -8,33 +13,33 @@ function App() {
 			id: 1,
 			username: "admin",
 			email: "admin@help.com",
-			active: true
+			active: true,
 		},
 		{
 			id: 2,
 			username: "guest",
 			email: "guest@guest.co.kr",
-			active: false
+			active: false,
 		},
 		{
 			id: 3,
 			username: "user",
 			email: "user@userhome.co.kr",
-			active: false
-		}
+			active: false,
+		},
 	]);
 	const [inputs, setInputs] = useState({
 		username: "",
-		email: ""
+		email: "",
 	});
 	const { username, email } = inputs;
 	// useing to users array in property id
 	const nextId = useRef(4);
-	const onChange = e => {
+	const onChange = (e) => {
 		const { name, value } = e.target;
 		setInputs({
 			...inputs,
-			[name]: value
+			[name]: value,
 		});
 	};
 
@@ -43,29 +48,31 @@ function App() {
 			{
 				id: nextId.current,
 				username,
-				email
-			}
+				email,
+			},
 		];
 		setUsers(users.concat(newUser));
 		setInputs({
 			username: "",
-			email: ""
+			email: "",
 		});
 		nextId.current += 1;
 	};
 
-	const onDelete = id => {
-		console.log(id);
-		setUsers(users.filter(user => user.id !== id));
+	const onDelete = (id) => {
+		setUsers(users.filter((user) => user.id !== id));
 	};
 
-	const onToggle = id => {
+	const onToggle = (id) => {
 		setUsers(
-			users.map(user =>
+			users.map((user) =>
 				user.id === id ? { ...user, active: !user.active } : user
 			)
 		);
 	};
+	// useMemo 안에 함수를 등록한다. 두번째 deps에 users를 등록하여 users가 변경될때
+	// 등록한 함수를 실행하게 한다.
+	const count = useMemo(() => countActiveuser(users), [users]);
 	return (
 		<>
 			<AddForm
@@ -74,11 +81,8 @@ function App() {
 				onChange={onChange}
 				onCreateUser={onCreateUser}
 			/>
-			<AddableUserList
-				users={users}
-				onDelete={onDelete}
-				onToggle={onToggle}
-			/>
+			<AddableUserList users={users} onDelete={onDelete} onToggle={onToggle} />
+			<div>활성 사용자 수 : {count}</div>
 		</>
 	);
 }
