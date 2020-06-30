@@ -1,6 +1,6 @@
 import React from "react";
 
-function User({ user, onDelete, onToggle }) {
+function User({ user, onRemove, onToggle }) {
 	const handleDelete = () => {};
 
 	return (
@@ -16,12 +16,12 @@ function User({ user, onDelete, onToggle }) {
 			</b>
 			&nbsp;
 			<span>({user.email})</span>
-			<button onClick={() => onDelete(user.id)}>삭제</button>
+			<button onClick={() => onRemove(user.id)}>삭제</button>
 		</div>
 	);
 }
 
-function AddableUserList({ users, onDelete, onToggle }) {
+function AddableUserList({ users, onRemove, onToggle }) {
 	return (
 		//Fragment는 <></>으로 사용해도된다.
 		<>
@@ -29,7 +29,7 @@ function AddableUserList({ users, onDelete, onToggle }) {
 				<User
 					key={user.id}
 					user={user}
-					onDelete={onDelete}
+					onRemove={onRemove}
 					onToggle={onToggle}
 				/>
 			))}
