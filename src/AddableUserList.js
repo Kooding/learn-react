@@ -1,12 +1,14 @@
-import React, { Fragment } from "react";
+import React from "react";
 
 function User({ user, onDelete, onToggle }) {
+	const handleDelete = () => {};
+
 	return (
 		<div>
 			<b
 				style={{
 					color: user.active ? "green" : "black",
-					cursor: "pointer"
+					cursor: "pointer",
 				}}
 				onClick={() => onToggle(user.id)}
 			>
@@ -22,8 +24,8 @@ function User({ user, onDelete, onToggle }) {
 function AddableUserList({ users, onDelete, onToggle }) {
 	return (
 		//Fragment는 <></>으로 사용해도된다.
-		<Fragment>
-			{users.map(user => (
+		<>
+			{users.map((user) => (
 				<User
 					key={user.id}
 					user={user}
@@ -31,7 +33,7 @@ function AddableUserList({ users, onDelete, onToggle }) {
 					onToggle={onToggle}
 				/>
 			))}
-		</Fragment>
+		</>
 	);
 }
 

@@ -2,8 +2,8 @@ import React, { useState, useRef, useMemo } from "react";
 import AddableUserList from "./AddableUserList";
 import AddForm from "./AddForm";
 
-function countActiveUser(users) {
-	console.log("활성화수 세는중 ....");
+function countActiveuser(users) {
+	console.log("활성 사용자 수를 세는중....");
 	return users.filter((user) => user.active).length;
 }
 
@@ -60,7 +60,6 @@ function App() {
 	};
 
 	const onDelete = (id) => {
-		console.log(id);
 		setUsers(users.filter((user) => user.id !== id));
 	};
 
@@ -71,7 +70,9 @@ function App() {
 			)
 		);
 	};
-	const count = useMemo(() => countActiveUser(users), [users]);
+	// useMemo 안에 함수를 등록한다. 두번째 deps에 users를 등록하여 users가 변경될때
+	// 등록한 함수를 실행하게 한다.
+	const count = useMemo(() => countActiveuser(users), [users]);
 	return (
 		<>
 			<AddForm
@@ -81,7 +82,7 @@ function App() {
 				onCreateUser={onCreateUser}
 			/>
 			<AddableUserList users={users} onDelete={onDelete} onToggle={onToggle} />
-			<div>현재 활성화된 카운트 수 : {count}</div>
+			<div>활성 사용자 수 : {count}</div>
 		</>
 	);
 }
