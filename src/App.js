@@ -1,14 +1,49 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useReducer, useRef, useMemo, useCallback } from "react";
 import AddableUserList from "./AddableUserList";
 import AddForm from "./AddForm";
 
 function countActiveuser(users) {
 	console.log("활성 사용자 수를 세는중....");
-	return users.filter((user) => user.active).length;
+	const activeCount = users.filter((user) => user.active).length;
+	return activeCount;
 }
-
-function App() {
-	const [users, setUsers] = useState([
+function reducer(state, action) {
+	switch (action.type) {
+		case "INPUT_CHANGE":
+			return {
+				...state,
+				inputs: {
+					...state.inputs,
+					[action.name]: action.value,
+				},
+			};
+		case "CREATE_USER":
+			return {
+				inputs: initialState.inputs,
+				users: state.users.concat(action.user),
+			};
+		case "TOGGLE_USER":
+			return {
+				...state,
+				users: state.users.map((user) =>
+					user.id === action.id ? { ...user, active: !user.active } : user
+				),
+			};
+		case "REMOVE_USER":
+			return {
+				...state,
+				users: state.users.filter((user) => user.id !== action.id),
+			};
+		default:
+			return new Error("ERROR!!!!");
+	}
+}
+const initialState = {
+	inputs: {
+		username: "",
+		email: "",
+	},
+	users: [
 		{
 			id: 1,
 			username: "admin",
@@ -27,51 +62,48 @@ function App() {
 			email: "user@userhome.co.kr",
 			active: false,
 		},
-	]);
-	const [inputs, setInputs] = useState({
-		username: "",
-		email: "",
-	});
-	const { username, email } = inputs;
-	// useing to users array in property id
-	const nextId = useRef(4);
-	const onChange = (e) => {
-		const { name, value } = e.target;
-		setInputs({
-			...inputs,
-			[name]: value,
-		});
-	};
+	],
+};
 
-	const onCreateUser = () => {
-		const newUser = [
-			{
+function App() {
+	const [state, dispatch] = useReducer(reducer, initialState);
+	const nextId = useRef(4);
+	const { users } = state;
+	const { username, email } = state.inputs;
+
+	const onChange = useCallback((e) => {
+		const { name, value } = e.target;
+		dispatch({
+			type: "INPUT_CHANGE",
+			name,
+			value,
+		});
+	}, []);
+
+	const onCreateUser = useCallback(() => {
+		dispatch({
+			type: "CREATE_USER",
+			user: {
 				id: nextId.current,
 				username,
 				email,
 			},
-		];
-		setUsers(users.concat(newUser));
-		setInputs({
-			username: "",
-			email: "",
 		});
 		nextId.current += 1;
-	};
+	}, [username, email]);
 
-	const onDelete = (id) => {
-		setUsers(users.filter((user) => user.id !== id));
-	};
-
-	const onToggle = (id) => {
-		setUsers(
-			users.map((user) =>
-				user.id === id ? { ...user, active: !user.active } : user
-			)
-		);
-	};
-	// useMemo 안에 함수를 등록한다. 두번째 deps에 users를 등록하여 users가 변경될때
-	// 등록한 함수를 실행하게 한다.
+	const onToggle = useCallback((id) => {
+		dispatch({
+			type: "TOGGLE_USER",
+			id,
+		});
+	}, []);
+	const onRemove = useCallback((id) => {
+		dispatch({
+			type: "REMOVE_USER",
+			id,
+		});
+	}, []);
 	const count = useMemo(() => countActiveuser(users), [users]);
 	return (
 		<>
@@ -81,7 +113,7 @@ function App() {
 				onChange={onChange}
 				onCreateUser={onCreateUser}
 			/>
-			<AddableUserList users={users} onDelete={onDelete} onToggle={onToggle} />
+			<AddableUserList users={users} onToggle={onToggle} onRemove={onRemove} />
 			<div>활성 사용자 수 : {count}</div>
 		</>
 	);
