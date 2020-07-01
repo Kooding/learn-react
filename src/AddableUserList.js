@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-function User({ user, onRemove, onToggle }) {
-	const handleDelete = () => {};
-
+const User = React.memo(function User({ user, onRemove, onToggle }) {
+	useEffect(() => {
+		console.log("mounted");
+	});
 	return (
 		<div>
 			<b
@@ -19,7 +20,7 @@ function User({ user, onRemove, onToggle }) {
 			<button onClick={() => onRemove(user.id)}>삭제</button>
 		</div>
 	);
-}
+});
 
 function AddableUserList({ users, onRemove, onToggle }) {
 	return (

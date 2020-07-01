@@ -1,6 +1,7 @@
 import React, { useReducer, useRef, useMemo, useCallback } from "react";
 import AddableUserList from "./AddableUserList";
 import AddForm from "./AddForm";
+import useInputs from "./useInputs";
 
 function countActiveuser(users) {
 	console.log("활성 사용자 수를 세는중....");
@@ -9,17 +10,16 @@ function countActiveuser(users) {
 }
 function reducer(state, action) {
 	switch (action.type) {
-		case "INPUT_CHANGE":
-			return {
-				...state,
-				inputs: {
-					...state.inputs,
-					[action.name]: action.value,
-				},
-			};
+		// case "INPUT_CHANGE":
+		// 	return {
+		// 		...state,
+		// 		inputs: {
+		// 			...state.inputs,
+		// 			[action.name]: action.value,
+		// 		},
+		// 	};
 		case "CREATE_USER":
 			return {
-				inputs: initialState.inputs,
 				users: state.users.concat(action.user),
 			};
 		case "TOGGLE_USER":
@@ -39,10 +39,10 @@ function reducer(state, action) {
 	}
 }
 const initialState = {
-	inputs: {
-		username: "",
-		email: "",
-	},
+	// inputs: {
+	// 	username: "",
+	// 	email: "",
+	// },
 	users: [
 		{
 			id: 1,
@@ -67,18 +67,23 @@ const initialState = {
 
 function App() {
 	const [state, dispatch] = useReducer(reducer, initialState);
+	const [form, onChange, reset] = useInputs({
+		username: "",
+		email: "",
+	});
 	const nextId = useRef(4);
 	const { users } = state;
-	const { username, email } = state.inputs;
+	const { username, email } = form;
+	// const { username, email } = state.inputs;
 
-	const onChange = useCallback((e) => {
-		const { name, value } = e.target;
-		dispatch({
-			type: "INPUT_CHANGE",
-			name,
-			value,
-		});
-	}, []);
+	// const onChange = useCallback((e) => {
+	// 	const { name, value } = e.target;
+	// 	dispatch({
+	// 		type: "INPUT_CHANGE",
+	// 		name,
+	// 		value,
+	// 	});
+	// }, []);
 
 	const onCreateUser = useCallback(() => {
 		dispatch({
@@ -90,7 +95,8 @@ function App() {
 			},
 		});
 		nextId.current += 1;
-	}, [username, email]);
+		reset();
+	}, [username, email, reset]);
 
 	const onToggle = useCallback((id) => {
 		dispatch({
