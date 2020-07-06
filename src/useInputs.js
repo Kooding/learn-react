@@ -1,4 +1,4 @@
-import { useState, useCallback, useReducer } from "react";
+import { useCallback, useReducer } from "react";
 
 function reducer(state, action) {
 	switch (action.type) {
@@ -8,9 +8,11 @@ function reducer(state, action) {
 				[action.name]: action.value,
 			};
 		case "RESET":
-			return {
-				...action.initialForm,
-			};
+			return Object.keys(state).reduce((previousValue, currentValue) => {
+				previousValue[currentValue] = "";
+				return previousValue;
+			}, {});
+
 		default:
 			return new Error("Error!!");
 	}
