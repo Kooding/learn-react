@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import { UserDispatch } from "./App";
 
-const User = React.memo(function User({ user, onRemove, onToggle }) {
-	useEffect(() => {
-		console.log("mounted");
-	});
+const User = React.memo(function User({ user }) {
+	const dispacth = useContext(UserDispatch);
+	const { username, email, id } = user;
 	return (
 		<div>
 			<b
@@ -11,28 +11,37 @@ const User = React.memo(function User({ user, onRemove, onToggle }) {
 					color: user.active ? "green" : "black",
 					cursor: "pointer",
 				}}
-				onClick={() => onToggle(user.id)}
+				onClick={() =>
+					dispacth({
+						type: "TOGGLE_USER",
+						id,
+					})
+				}
 			>
 				{user.username}
 			</b>
 			&nbsp;
 			<span>({user.email})</span>
-			<button onClick={() => onRemove(user.id)}>삭제</button>
+			<button
+				onClick={() =>
+					dispacth({
+						type: "REMOVE_USER",
+						id,
+					})
+				}
+			>
+				삭제
+			</button>
 		</div>
 	);
 });
 
-function AddableUserList({ users, onRemove, onToggle }) {
+function AddableUserList({ users }) {
 	return (
 		//Fragment는 <></>으로 사용해도된다.
 		<>
 			{users.map((user) => (
-				<User
-					key={user.id}
-					user={user}
-					onRemove={onRemove}
-					onToggle={onToggle}
-				/>
+				<User key={user.id} user={user} />
 			))}
 		</>
 	);
