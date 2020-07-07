@@ -1,6 +1,28 @@
-import React from "react";
+import React, { useContext, useRef } from "react";
+import useInputs from "./useInputs";
+import { UserDispatch } from "./App";
 
-function AddForm({ username, email, onChange, onCreateUser }) {
+function AddForm() {
+	const [form, onChange, reset] = useInputs({
+		username: "",
+		email: "",
+	});
+	const { username, email } = form;
+	const dispacth = useContext(UserDispatch);
+	const nextId = useRef(4);
+	const onCreateUser = () => {
+		dispacth({
+			type: "CREATE_USER",
+			user: {
+				id: nextId.current,
+				username,
+				email,
+			},
+		});
+		nextId.current += 1;
+		reset();
+	};
+
 	return (
 		<div>
 			<input
@@ -20,4 +42,4 @@ function AddForm({ username, email, onChange, onCreateUser }) {
 	);
 }
 
-export default AddForm;
+export default React.memo(AddForm);

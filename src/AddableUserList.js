@@ -1,9 +1,9 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { UserDispatch } from "./App";
 
 const User = React.memo(function User({ user }) {
 	const dispacth = useContext(UserDispatch);
-	const { username, email, id } = user;
+	const { id } = user;
 	return (
 		<div>
 			<b
